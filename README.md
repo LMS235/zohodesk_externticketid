@@ -32,3 +32,11 @@ Hier im Beispiel eben:
   * ticketID => Ticket Id
   * ticketsub => Subject
   * ticketcontact => Contact Id
+
+
+# Einbau als Workflow
+
+Das ganze sollte man dann als Workflow entsprechend einbauen. Hier kann man z.B. auch sagen "nur wenn Feld ExternalID leer" um unnötiges ausführen zu verhindern.
+
+Code wird "as is" zu Verfügung gestellt. Keinerlei Haftung oder Support.
+
