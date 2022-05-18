@@ -1,0 +1,45 @@
+// Externe Ticket ID übernehmen (und falls nötig im Betreff ergänzen)
+// Florian Lamml 17.05.2022
+// OrgID (aus API Einstellungen)
+orgID = "xxxxxxxxxxx";
+// Ticket Infos abholen via API (EU Datacenter .eu oder alle anderen .com)
+getTicketDetails = invokeurl
+[
+	url :"https://desk.zoho.eu/api/v1/tickets/" + ticketID + "/latestThread?include=plainText&needPublic"
+	type :GET
+	connection:"extticketid"
+];
+// ID auslesen (damit Betreff gelesen werden kann)
+threadID = getTicketDetails.get("id");
+getThreadDetails = invokeurl
+[
+	url :"https://desk.zoho.eu/api/v1/tickets/" + ticketID + "/threads/" + threadID + "/originalContent"
+	type :GET
+	connection:"extticketid"
+];
+plainText = getThreadDetails;
+// Zusätzliche Infos aus dem Kontakt auslesen (damit entsprechend nach der Nummer gesucht werden kann)
+extticketinfos = zoho.desk.getRecordById(orgID,"contacts",ticketcontact);
+PRESTRING = extticketinfos.get("cf").get("cf_ext_ticket_pre");
+POSTSTRING = extticketinfos.get("cf").get("cf_ext_ticket_post");
+PRELENG = PRESTRING.len();
+// Verarbeitung
+if(plainText.containsIgnoreCase(PRESTRING) && plainText.containsIgnoreCase(POSTSTRING))
+{
+	notid = plainText.subText(plainText.indexOf(PRESTRING) + PRELENG,plainText.indexOf(POSTSTRING)).trim();
+	// Externe Ticketnummer wieder zusammensetzen
+	extticket = PRESTRING + notid + POSTSTRING;
+	// Prüfung ob die Ticketnummer vielleicht schon im Betreff steht
+	checkalreadyset = ticketsub.contains(extticket);
+	if(checkalreadyset == false)
+	{
+		// Betreff und ExternalID Feld updaten
+		newticketsub = ticketsub + " " + extticket;
+		zoho.desk.update(orgID,"tickets",ticketID,{"subject":newticketsub,"cf":{"cf_external_id":extticket}});
+	}
+	else
+	{
+		// ExternalID Feld updaten
+		zoho.desk.update(orgID,"tickets",ticketID,{"cf":{"cf_external_id":extticket}});
+	}
+}
