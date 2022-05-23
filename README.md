@@ -21,8 +21,8 @@ Hier im Beispiel eben:
 1. Click on Setup > Developer Space > Connections 
 2. Click on Create Connection
 3. Choose Zoho OAuth
-4. Name Connection and connection link as "extticketid"
-5. In Scope Choose all values starting with Desk. ends will .ALL and include Desk.search.READ, Desk.products.READ,Desk.basic.READ
+4. Name Connection and connection link as `extticketid`
+5. In Scope Choose all value `Desk.tickets.READ`
 6. Click on Create and Connect
 7. Click on Connect
 8. Click on Accept and proceed
